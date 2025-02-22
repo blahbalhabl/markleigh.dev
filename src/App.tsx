@@ -1,3 +1,4 @@
+import { Analytics } from "@vercel/analytics/react";
 import Header from "@/components/header";
 import { BackgroundBeams } from "@/components/ui/background-beams";
 import Landing from "@/components/landing";
@@ -8,6 +9,7 @@ const App = () => {
       <Header />
       <Landing />
       <BackgroundBeams />
+      <Analytics />
     </>
   );
 };
