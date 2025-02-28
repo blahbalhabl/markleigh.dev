@@ -1,47 +1,152 @@
-import { motion } from "framer-motion";
-import { Icon } from "@iconify/react";
+import React from 'react';
+import { motion } from 'framer-motion';
+import { Icon } from '@iconify/react';
 
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { FlipWords } from "@/components/ui/flip-words";
-
-import AppleMemoji from "@/assets/2558af3c-6a64-47b6-8c5b-ac1e82885afd.webp";
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { FlipWords } from '@/components/ui/flip-words';
+import { cn } from '@/lib/utils';
+import { Meteors } from './ui/meteors';
 
 const SOCIALS = Object.freeze([
   {
-    name: "LinkedIn",
-    icon: "eva:linkedin-fill",
-    link: "https://www.linkedin.com/in/mark-leigh-david-282383201/",
+    name: 'LinkedIn',
+    icon: 'eva:linkedin-fill',
+    link: 'https://www.linkedin.com/in/mark-leigh-david-282383201/',
   },
   {
-    name: "GitHub",
-    icon: "charm:github",
-    link: "https://www.github.com/blahbalhabl",
+    name: 'GitHub',
+    icon: 'charm:github',
+    link: 'https://www.github.com/blahbalhabl',
   },
   {
-    name: "WhatsApp",
-    icon: "flowbite:whatsapp-solid",
-    link: "https://wa.me/639766439701",
+    name: 'WhatsApp',
+    icon: 'flowbite:whatsapp-solid',
+    link: 'https://wa.me/639766439701',
   },
 ]);
 
-const Landing = () => {
-  const flipWords = [
-    "React",
-    "NextJS",
-    "TanStack",
-    "NodeJS",
-    "ExpressJS",
-    "MongoDB",
-    "TailwindCSS",
-    "MaterialUI",
-  ];
+const BorderBox = ({
+  className,
+  children,
+  origin = 'left',
+  isRotating = false, // New prop to control rotation
+}: {
+  className?: string;
+  children?: React.ReactNode;
+  origin?: 'left' | 'right';
+  isRotating?: boolean;
+}) => {
+  // Generate random delay between 0.1 and 1 second
+  const randomDelay = React.useMemo(() => Math.random() * 0.9 + 0.1, []);
+
+  // Generate random duration between 1 and 2 seconds for initial animation
+  const randomDuration = React.useMemo(() => Math.random() * 1 + 1, []);
+
+  // Generate longer random duration (2-4 seconds) for repeat animations
+  const repeatDuration = React.useMemo(() => Math.random() * 1.5 + 1.5, []);
+
+  // Check if the component has children
+  const hasChildren = !!React.Children.count(children);
 
   return (
-    <div className="flex h-[calc(100dvh-300px)] gap-10 items-center justify-between">
-      <aside className="flex flex-col gap-10 items-center justify-center h-full">
+    <div className="relative size-[70px] overflow-hidden sm:size-[80px] md:size-[100px]">
+      <motion.div
+        className={cn(
+          'absolute h-full w-full border border-primary p-2 sm:p-3 md:p-5',
+          className,
+          origin === 'left' ? 'left-0' : 'right-0'
+        )}
+        initial={{
+          width: 0,
+          opacity: 0,
+        }}
+        animate={{
+          width: '100%',
+          opacity: 1,
+          rotateX: hasChildren && isRotating ? 360 : 0,
+        }}
+        transition={{
+          duration: randomDuration,
+          delay: randomDelay,
+          ease: 'easeInOut',
+
+          // Width animation repeats for boxes without children
+          ...(!hasChildren && {
+            repeat: Infinity,
+            repeatType: 'mirror',
+            repeatDelay: 2,
+            duration: repeatDuration,
+          }),
+
+          // RotateX animation for boxes with children when it's their turn
+          ...(hasChildren &&
+            isRotating && {
+              rotateX: {
+                duration: 2,
+              },
+            }),
+        }}
+        whileHover={{ scale: 1.05 }}
+      >
+        <motion.div
+          whileHover={{ scale: 1.1, rotate: 360 }}
+          transition={{ duration: 3 }}
+        >
+          {children}
+        </motion.div>
+      </motion.div>
+    </div>
+  );
+};
+
+const Landing = () => {
+  const flipWords = [
+    'React',
+    'NextJS',
+    'TanStack',
+    'NodeJS',
+    'ExpressJS',
+    'MongoDB',
+    'TailwindCSS',
+    'MaterialUI',
+  ];
+
+  // Icons used in boxes with children
+  const iconRefs = React.useRef<string[]>([
+    'skill-icons:tailwindcss-dark',
+    'devicon:react',
+    'logos:react-query-icon',
+    'vscode-icons:file-type-deno',
+    'skill-icons:mongodb',
+    'skill-icons:typescript',
+    'devicon:nextjs',
+  ]);
+
+  // Keep track of which box is currently rotating
+  const [rotatingBoxIndex, setRotatingBoxIndex] = React.useState<number>(0);
+
+  // Set up interval to change which box is rotating
+  React.useEffect(() => {
+    const interval = setInterval(() => {
+      setRotatingBoxIndex(
+        (prevIndex) => (prevIndex + 1) % iconRefs.current.length
+      );
+    }, 5000);
+
+    return () => clearInterval(interval);
+  }, []);
+
+  return (
+    <div className="flex h-[calc(100dvh-300px)] w-full flex-col items-center justify-between gap-10 self-center sm:w-[70rem] lg:flex-row">
+      <aside className="hidden h-full flex-col items-center justify-center gap-10 sm:flex">
         {SOCIALS.map((social, i) => (
-          <Button key={i} variant="roundedGhost" className="py-1 h-fit" asChild>
+          <Button
+            key={i}
+            variant="roundedGhost"
+            className="h-fit py-1 hover:text-accent"
+            asChild
+          >
             <motion.a
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
@@ -53,21 +158,22 @@ const Landing = () => {
           </Button>
         ))}
       </aside>
-      <div className="flex-1 gap-10 flex-col z-10 flex">
-        <div>
-          <h2 className="text-left text-[64px] font-sans font-bold leading-none">
+      <div className="relative z-10 flex w-full flex-col gap-10 sm:w-[483px]">
+        <Meteors number={10} />
+        <div className="w-[250px] sm:w-full">
+          <h2 className="text-left font-sans text-4xl font-bold leading-none lg:text-5xl xl:text-[64px]">
             <FlipWords words={flipWords} className="text-accent" />
           </h2>
           <motion.h2
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ duration: 1, delay: 0.2 }}
-            className="text-right text-[64px] text-primary font-sans font-bold"
+            className="ml-20 font-sans text-4xl font-bold text-primary lg:text-5xl xl:text-[64px]"
           >
             Developer
           </motion.h2>
         </div>
-        <div className="text-wrap text-secondary-foreground text-[16px] z-10">
+        <div className="z-10 text-wrap text-xs text-secondary-foreground sm:text-sm xl:text-[16px]">
           <motion.span
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
@@ -78,8 +184,8 @@ const Landing = () => {
             in React and TypeScript, and I leverage cutting-edge technologies
             like
             <motion.span className="text-accent">
-              {" "}
-              Vite, Next.js, Express, Node.js, and REST frameworks{" "}
+              {' '}
+              Vite, Next.js, Express, Node.js, and REST frameworks{' '}
             </motion.span>
             to deliver top-notch solutions. Whether it's building a sleek
             front-end interface or a robust back-end system, I'm dedicated to
@@ -95,7 +201,7 @@ const Landing = () => {
         >
           <Input placeholder="Email Address" />
           <Button
-            className="absolute right-[5px] gap-0 pl-5 bg-background text-accent text-[14px] top-1/2 transform -translate-y-1/2"
+            className="absolute right-[5px] top-1/2 -translate-y-1/2 transform gap-0 bg-background pl-5 text-[14px] text-accent"
             variant="rounded"
           >
             <p className="underline-animation">Let&apos;s Talk</p>
@@ -107,9 +213,102 @@ const Landing = () => {
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         transition={{ duration: 1, delay: 0.2 }}
-        className="flex-1 z-10 justify-end flex"
+        className="relative z-10 grid flex-1 grid-cols-5 justify-end"
       >
-        <img className="h-[450px]" src={AppleMemoji} alt="Memoji" />
+        <Meteors number={10} />
+        {/* Row 1 */}
+        <BorderBox className="border-l-0 border-r-0 border-t-0 bg-transparent" />
+        <BorderBox
+          className="border-l-0 border-t-0 bg-primary/10 backdrop-blur-sm"
+          origin="left"
+        />
+        <BorderBox
+          className="border-l-0 border-t-0 bg-transparent"
+          origin="right"
+          isRotating={rotatingBoxIndex === 0} // First box with icon
+        >
+          <Icon
+            icon="skill-icons:tailwindcss-dark"
+            className="z-50 h-full w-full"
+          />
+        </BorderBox>
+        <BorderBox className="border-l-0 border-r-0 border-t-0 bg-transparent" />
+        <BorderBox className="border-0 bg-transparent" />
+        {/* Row 2 */}
+        <BorderBox
+          className="border-l-0 border-t-0 bg-transparent"
+          origin="left"
+        />
+        <BorderBox
+          className="border-l-0 border-t-0 bg-primary/5 backdrop-blur-sm"
+          origin="right"
+          isRotating={rotatingBoxIndex === 1} // Second box with icon
+        >
+          <Icon icon="devicon:react" className="z-50 h-full w-full" />
+        </BorderBox>
+        <BorderBox
+          className="border-l-0 border-t-0 bg-primary/30 backdrop-blur-sm"
+          origin="right"
+          isRotating={rotatingBoxIndex === 2} // Third box with icon
+        >
+          <Icon icon="logos:react-query-icon" className="z-50 h-full w-full" />
+        </BorderBox>
+        <BorderBox
+          className="border-l-0 border-t-0 bg-transparent"
+          origin="left"
+        />
+        <BorderBox
+          className="border-l-0 border-r-0 border-t-0 bg-primary/10 backdrop-blur-sm"
+          origin="left"
+        />
+        {/* Row 3 */}
+        <BorderBox className="border-b-0 border-l-0 border-t-0 bg-transparent" />
+        <BorderBox
+          className="border-l-0 border-r-0 border-t-0 bg-primary/10 backdrop-blur-sm"
+          origin="left"
+        />
+        <BorderBox
+          className="border-t-0 bg-primary/5 backdrop-blur-sm"
+          origin="right"
+          isRotating={rotatingBoxIndex === 3} // Fourth box with icon
+        >
+          <Icon
+            icon="vscode-icons:file-type-deno"
+            className="z-50 h-full w-full"
+          />
+        </BorderBox>
+        <BorderBox
+          className="border-l-0 border-t-0 bg-primary/10 backdrop-blur-sm"
+          origin="right"
+          isRotating={rotatingBoxIndex === 4} // Fifth box with icon
+        >
+          <Icon icon="skill-icons:mongodb" className="z-50 h-full w-full" />
+        </BorderBox>
+        <BorderBox className="border-b-0 border-l-0 border-r-0 border-t-0 bg-transparent" />
+        {/* Row 4 */}
+        <BorderBox className="border-0 bg-transparent" />
+        <BorderBox
+          className="border-l-0 border-t-0 bg-transparent"
+          origin="right"
+          isRotating={rotatingBoxIndex === 5} // Sixth box with icon
+        >
+          <Icon icon="skill-icons:typescript" className="z-50 h-full w-full" />
+        </BorderBox>
+        <BorderBox
+          className="border-l-0 border-t-0 bg-transparent"
+          origin="left"
+        />
+        <BorderBox
+          className="border-b-0 border-l-0 border-t-0 bg-transparent"
+          origin="left"
+        />
+        <BorderBox
+          className="border-0 bg-primary/5 backdrop-blur-sm"
+          origin="right"
+          isRotating={rotatingBoxIndex === 6} // Seventh box with icon
+        >
+          <Icon icon="devicon:nextjs" className="z-50 h-full w-full" />
+        </BorderBox>
       </motion.div>
     </div>
   );
