@@ -12,6 +12,10 @@
   min-height: 100dvh;
 }
 
+::-webkit-scrollbar {
+  display: none;
+}
+
 .underline-animation {
   position: relative;
 }

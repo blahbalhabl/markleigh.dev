@@ -5,7 +5,7 @@ import { Meteors } from '@/components/ui/meteors';
 
 const Header = () => {
   return (
-    <header className="relative z-20 flex h-fit w-[70rem] items-center justify-between self-center py-5 sm:py-14">
+    <header className="relative z-20 flex h-fit w-full items-center justify-between self-center py-5 sm:py-14">
       <Meteors number={20} />
       <div className="flex items-center gap-5 sm:gap-10">
         <Logo className="text-3xl sm:text-5xl" />

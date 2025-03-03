@@ -1,46 +1,218 @@
+import { useEffect, useState } from 'react';
+import { motion } from 'framer-motion';
 import { Icon } from '@iconify/react';
+import { SKILLS } from '@/constants/skills';
+import { cn } from '@/lib/utils';
 
-import { Meteors } from '@/components/ui/meteors';
-// import { cn } from '@/lib/utils';
+// Animated title component
+const AnimatedTitle = () => {
+  const title = 'Technical Skills';
 
-const SkillShelf = () => {
+  // Animation variants for text reveal
+  const container = {
+    hidden: { opacity: 0 },
+    visible: (i = 1) => ({
+      opacity: 1,
+      transition: { staggerChildren: 0.05, delayChildren: 0.1 * i },
+    }),
+  };
+
+  const child = {
+    hidden: {
+      opacity: 0,
+      y: 20,
+      transition: {
+        type: 'spring',
+        damping: 12,
+        stiffness: 100,
+      },
+    },
+    visible: {
+      opacity: 1,
+      y: 0,
+      transition: {
+        type: 'spring',
+        damping: 12,
+        stiffness: 100,
+      },
+    },
+  };
+
+  return (
+    <div className="relative mb-20 flex flex-col items-center">
+      {/* Animated gradient circle background */}
+      <div className="animate-slow-pulse absolute -z-10 h-64 w-64 rounded-full bg-gradient-to-r from-primary/10 via-accent/5 to-secondary/10 blur-3xl"></div>
+
+      {/* Animated text */}
+      <motion.div
+        className="relative"
+        variants={container}
+        initial="hidden"
+        whileInView="visible"
+        viewport={{ once: true, amount: 0.8 }}
+      >
+        <div className="mb-1 flex">
+          {title.split('').map((letter, index) => (
+            <motion.span
+              key={index}
+              variants={child}
+              className="inline-block text-5xl font-bold lg:text-6xl"
+              style={{
+                color: letter === ' ' ? 'transparent' : 'hsl(var(--primary))',
+                textShadow:
+                  letter === ' ' ? 'none' : '0 0 8px rgba(255,255,255,0.1)',
+              }}
+            >
+              {letter === ' ' ? '\u00A0' : letter}
+            </motion.span>
+          ))}
+        </div>
+
+        {/* Animated underline */}
+        <motion.div
+          className="h-1 w-full rounded-full bg-gradient-to-r from-primary via-accent to-primary"
+          initial={{ width: 0, opacity: 0 }}
+          whileInView={{ width: '100%', opacity: 1 }}
+          transition={{ delay: 0.5, duration: 0.8 }}
+          viewport={{ once: true }}
+        />
+      </motion.div>
+
+      {/* Subtitle text */}
+      <motion.p
+        className="mt-4 text-center text-lg text-muted-foreground"
+        initial={{ opacity: 0, y: 10 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        transition={{ delay: 0.6, duration: 0.5 }}
+        viewport={{ once: true }}
+      >
+        Modern technologies I specialize in
+      </motion.p>
+    </div>
+  );
+};
+
+const SkillCard = ({
+  icon,
+  name,
+  color,
+  description,
+  index,
+  totalItems,
+  colCount,
+}: {
+  icon: string;
+  name: string;
+  color: string;
+  description: string;
+  index: number;
+  totalItems: number;
+  colCount: number;
+}) => {
+  // Calculate position (row and column)
+  const row = Math.floor(index / colCount);
+  const col = index % colCount;
+  const isLastRow = row === Math.floor((totalItems - 1) / colCount);
+  const isLastCol = col === colCount - 1 || index === totalItems - 1;
+
+  // Calculate border classes based on position
+  const borderClasses = `
+    ${!isLastCol ? 'border-r' : ''}
+    ${!isLastRow ? 'border-b' : ''}
+    border-gray-700
+  `;
+
   return (
     <div
-      className="my-36 flex w-[70rem] flex-wrap items-center justify-center gap-5 self-center py-20 sm:gap-20"
-      id="shelf"
+      className={cn(
+        'card group relative flex h-[250px] flex-col items-center justify-end overflow-hidden backdrop-blur-sm transition-all hover:shadow-[0_0_15px_rgba(255,255,255,0.1)] sm:h-[280px]',
+        borderClasses
+      )}
     >
-      {/* <div
-        className={cn(
-          'card group relative mx-auto flex h-96 w-full cursor-pointer flex-col justify-end overflow-hidden rounded-md border border-transparent p-4 shadow-xl dark:border-neutral-800',
-          'bg-[url(https://images.unsplash.com/photo-1476842634003-7dcca8f832de?ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&ixlib=rb-1.2.1&auto=format&fit=crop&w=1650&q=80)] bg-cover',
-          // Preload hover image by setting it in a pseudo-element
-          'before:fixed before:inset-0 before:z-[-1] before:bg-[url(https://i.giphy.com/media/v1.Y2lkPTc5MGI3NjExNWlodTF3MjJ3NnJiY3Rlc2J0ZmE0c28yeWoxc3gxY2VtZzA5ejF1NSZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/syEfLvksYQnmM/giphy.gif)] before:opacity-0',
-          'hover:bg-[url(https://i.giphy.com/media/v1.Y2lkPTc5MGI3NjExNWlodTF3MjJ3NnJiY3Rlc2J0ZmE0c28yeWoxc3gxY2VtZzA5ejF1NSZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/syEfLvksYQnmM/giphy.gif)]',
-          "hover:after:absolute hover:after:inset-0 hover:after:bg-black hover:after:opacity-50 hover:after:content-['']",
-          'transition-all duration-500'
-        )}
-      >
-        Hello World
-      </div> */}
-      {/* React Card */}
-      <div className="relative h-[350px] w-full max-w-xs">
-        <div className="absolute inset-0 h-full w-full scale-[0.80] transform rounded-full bg-gradient-to-r from-primary to-accent blur-3xl" />
-        <div className="relative flex h-full flex-col items-center justify-end overflow-hidden rounded-2xl border border-gray-800 bg-gray-900 px-4 py-8 shadow-xl">
-          <Icon
-            icon="flowbite:react-solid"
-            fontSize={100}
-            className="z-10 text-cyan-400"
+      {/* Background icon in upper left */}
+      <Icon
+        icon={icon}
+        fontSize={300}
+        className="animate-slow-spin absolute -left-20 -top-20 text-gray-300 opacity-[1%]"
+      />
+
+      {/* Main animated icon */}
+      <div className="absolute left-1/2 top-1/2 z-10 -translate-x-1/2 -translate-y-1/2 transform transition-all duration-500 ease-in-out group-hover:top-16 group-hover:scale-75">
+        <Icon
+          icon={icon}
+          fontSize={100}
+          className={cn(
+            'opacity-70 transition-all duration-700 group-hover:opacity-100',
+            color
+          )}
+        />
+      </div>
+
+      {/* Text content that appears on hover */}
+      <div className="flex translate-y-10 flex-col items-center transition-all duration-500 group-hover:translate-y-0">
+        <h1 className="relative z-50 mb-2 text-xl font-bold text-white opacity-0 transition-opacity duration-500 group-hover:opacity-100">
+          {name}
+        </h1>
+        <p className="relative z-50 mb-4 px-6 text-center text-sm font-normal text-slate-400 opacity-0 transition-opacity delay-100 duration-500 group-hover:opacity-100">
+          {description}
+        </p>
+      </div>
+    </div>
+  );
+};
+
+const SkillShelf = () => {
+  // State to store the current column count
+  const [colCount, setColCount] = useState(5); // Default for SSR
+
+  // Function to calculate column count based on window width
+  const getColumnCount = () => {
+    if (typeof window !== 'undefined') {
+      const width = window.innerWidth;
+      if (width >= 1280) return 5; // xl
+      if (width >= 1024) return 4; // lg
+      if (width >= 768) return 3; // md
+      if (width >= 640) return 2; // sm
+      return 1;
+    }
+    return 5;
+  };
+
+  // Update column count on mount and window resize
+  useEffect(() => {
+    // Set initial column count
+    setColCount(getColumnCount());
+
+    // Handler function for resize events
+    const handleResize = () => {
+      setColCount(getColumnCount());
+    };
+
+    // Add event listener
+    window.addEventListener('resize', handleResize);
+
+    // Clean up event listener on component unmount
+    return () => {
+      window.removeEventListener('resize', handleResize);
+    };
+  }, []); // Empty dependency array means this effect runs once on mount
+
+  return (
+    <div id="shelf" className="container my-36 self-center py-20">
+      <AnimatedTitle />
+      <div className="mx-auto grid grid-cols-1 overflow-hidden rounded-lg sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5">
+        {SKILLS.map((skill, i) => (
+          <SkillCard
+            key={i}
+            icon={skill.icon}
+            name={skill.name}
+            color={skill.color}
+            description={skill.description}
+            index={i}
+            totalItems={SKILLS.length}
+            colCount={colCount}
           />
-          <h1 className="relative z-50 mb-4 text-xl font-bold text-white">
-            React
-          </h1>
-          <p className="relative z-50 mb-4 text-center text-base font-normal text-slate-500">
-            I don&apos;t know what to write so I&apos;ll just paste something
-            cool here. One more sentence because lorem ipsum is just
-            unacceptable. Won&apos;t ChatGPT the shit out of this.
-          </p>
-          <Meteors number={20} />
-        </div>
+        ))}
       </div>
     </div>
   );

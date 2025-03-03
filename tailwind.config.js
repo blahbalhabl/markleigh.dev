@@ -1,3 +1,7 @@
+import defaultTheme from 'tailwindcss/defaultTheme';
+import colors from 'tailwindcss/colors';
+import flattenColorPalette from 'tailwindcss/lib/util/flattenColorPalette';
+
 /** @type {import('tailwindcss').Config} */
 export default {
   darkMode: ['class'],
@@ -54,6 +58,8 @@ export default {
       animation: {
         'meteor-effect': 'meteor 5s linear infinite',
         move: 'move 5s linear infinite',
+        'slow-spin': 'spin 120s linear infinite',
+        'slow-pulse': 'pulse 6s ease-in-out infinite',
       },
       keyframes: {
         meteor: {
@@ -68,8 +74,28 @@ export default {
           '0%': { transform: 'translateX(-200px)' },
           '100%': { transform: 'translateX(200px)' },
         },
+        spin: {
+          '0%': { transform: 'rotate(0deg)' },
+          '100%': { transform: 'rotate(360deg)' },
+        },
+        pulse: {
+          '0%, 100%': { opacity: 0.3, transform: 'scale(1)' },
+          '50%': { opacity: 0.2, transform: 'scale(1.1)' },
+        },
       },
     },
   },
-  plugins: [require('tailwindcss-animate')],
+  plugins: [require('tailwindcss-animate'), addVariablesForColors],
 };
+
+// This plugin adds each Tailwind color as a global CSS variable, e.g. var(--gray-200).
+function addVariablesForColors({ addBase, theme }) {
+  let allColors = flattenColorPalette(theme('colors'));
+  let newVars = Object.fromEntries(
+    Object.entries(allColors).map(([key, val]) => [`--${key}`, val])
+  );
+
+  addBase({
+    ':root': newVars,
+  });
+}

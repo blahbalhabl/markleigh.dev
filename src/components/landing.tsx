@@ -5,8 +5,9 @@ import { Icon } from '@iconify/react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { FlipWords } from '@/components/ui/flip-words';
+import { Meteors } from '@/components/ui/meteors';
+
 import { cn } from '@/lib/utils';
-import { Meteors } from './ui/meteors';
 
 const SOCIALS = Object.freeze([
   {
@@ -50,7 +51,7 @@ const BorderBox = ({
   const hasChildren = !!React.Children.count(children);
 
   return (
-    <div className="relative size-[70px] overflow-hidden sm:size-[80px] md:size-[100px]">
+    <div className="relative size-[70px] overflow-hidden lg:size-[80px] xl:size-[100px]">
       <motion.div
         className={cn(
           'absolute h-full w-full border border-primary p-2 sm:p-3 md:p-5',
@@ -117,7 +118,7 @@ const Landing = () => {
     'skill-icons:tailwindcss-dark',
     'devicon:react',
     'logos:react-query-icon',
-    'vscode-icons:file-type-deno',
+    'skill-icons:git',
     'skill-icons:mongodb',
     'skill-icons:typescript',
     'devicon:nextjs',
@@ -138,82 +139,90 @@ const Landing = () => {
   }, []);
 
   return (
-    <div className="flex h-[calc(100dvh-300px)] w-full flex-col items-center justify-between gap-10 self-center sm:w-[70rem] lg:flex-row">
-      <aside className="hidden h-full flex-col items-center justify-center gap-10 sm:flex">
-        {SOCIALS.map((social, i) => (
-          <Button
-            key={i}
-            variant="roundedGhost"
-            className="h-fit py-1 hover:text-accent"
-            asChild
-          >
-            <motion.a
+    <div className="flex h-full min-h-[calc(100dvh-300px)] w-full flex-col gap-10 self-center lg:flex-row lg:items-center">
+      {/* Container for aside and content div in a row at lg breakpoint */}
+      <div className="flex flex-row items-center gap-5 lg:w-2/3 xl:w-fit xl:flex-1">
+        <aside className="flex h-full flex-col items-center justify-center gap-10">
+          {SOCIALS.map((social, i) => (
+            <Button
+              key={i}
+              variant="roundedGhost"
+              className="h-fit py-1 hover:text-accent"
+              asChild
+            >
+              <motion.a
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                transition={{ duration: 1, delay: 0.2 }}
+                href={social.link}
+              >
+                <Icon icon={social.icon} className="mb-[1px]" fontSize={25} />
+              </motion.a>
+            </Button>
+          ))}
+        </aside>
+        <div className="relative z-10 flex w-full flex-col gap-10 sm:max-w-[483px]">
+          <Meteors number={10} />
+          <div className="w-[250px] sm:w-full">
+            <h2 className="text-left font-sans text-4xl font-bold leading-none lg:text-5xl xl:text-[64px]">
+              <FlipWords words={flipWords} className="text-accent" />
+            </h2>
+            <motion.h2
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               transition={{ duration: 1, delay: 0.2 }}
-              href={social.link}
+              className="ml-20 font-sans text-4xl font-bold text-primary lg:text-5xl xl:text-[64px]"
             >
-              <Icon icon={social.icon} className="mb-[1px]" fontSize={25} />
-            </motion.a>
-          </Button>
-        ))}
-      </aside>
-      <div className="relative z-10 flex w-full flex-col gap-10 sm:w-[483px]">
-        <Meteors number={10} />
-        <div className="w-[250px] sm:w-full">
-          <h2 className="text-left font-sans text-4xl font-bold leading-none lg:text-5xl xl:text-[64px]">
-            <FlipWords words={flipWords} className="text-accent" />
-          </h2>
-          <motion.h2
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ duration: 1, delay: 0.2 }}
-            className="ml-20 font-sans text-4xl font-bold text-primary lg:text-5xl xl:text-[64px]"
-          >
-            Developer
-          </motion.h2>
-        </div>
-        <div className="z-10 text-wrap text-xs text-secondary-foreground sm:text-sm xl:text-[16px]">
-          <motion.span
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ duration: 1, delay: 0.2 }}
-          >
-            Hi there! I'm a passionate full stack developer with a knack for
-            creating dynamic and responsive web applications. My expertise lies
-            in React and TypeScript, and I leverage cutting-edge technologies
-            like
-            <motion.span className="text-accent">
-              {' '}
-              Vite, Next.js, Express, Node.js, and REST frameworks{' '}
+              Developer
+            </motion.h2>
+          </div>
+          <div className="z-10 text-wrap text-xs text-secondary-foreground sm:text-sm xl:text-[16px]">
+            <motion.span
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ duration: 1, delay: 0.2 }}
+            >
+              Hi there! I'm a passionate full stack developer with a knack for
+              creating dynamic and responsive web applications. My expertise
+              lies in React and TypeScript, and I leverage cutting-edge
+              technologies like
+              <motion.span className="text-accent">
+                {' '}
+                Vite, Next.js, Express, Node.js, and REST frameworks{' '}
+              </motion.span>
+              to deliver top-notch solutions. Whether it's building a sleek
+              front-end interface or a robust back-end system, I'm dedicated to
+              bringing your vision to life with precision and creativity. Let's
+              collaborate and make something amazing together!
             </motion.span>
-            to deliver top-notch solutions. Whether it's building a sleek
-            front-end interface or a robust back-end system, I'm dedicated to
-            bringing your vision to life with precision and creativity. Let's
-            collaborate and make something amazing together!
-          </motion.span>
-        </div>
-        <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ duration: 1, delay: 0.2 }}
-          className="relative z-10"
-        >
-          <Input placeholder="Email Address" />
-          <Button
-            className="absolute right-[5px] top-1/2 -translate-y-1/2 transform gap-0 bg-background pl-5 text-[14px] text-accent"
-            variant="rounded"
+          </div>
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ duration: 1, delay: 0.2 }}
+            className="relative z-10"
           >
-            <p className="underline-animation">Let&apos;s Talk</p>
-            <Icon icon="mi:chevron-right" className="mb-[1px]" fontSize={20} />
-          </Button>
-        </motion.div>
+            <Input placeholder="Email Address" />
+            <Button
+              className="absolute right-[5px] top-1/2 -translate-y-1/2 transform gap-0 bg-background pl-5 text-[14px] text-accent"
+              variant="rounded"
+            >
+              <p className="underline-animation">Let&apos;s Talk</p>
+              <Icon
+                icon="mi:chevron-right"
+                className="mb-[1px]"
+                fontSize={20}
+              />
+            </Button>
+          </motion.div>
+        </div>
       </div>
+      {/* Border boxes grid in a column at lg breakpoint */}
       <motion.div
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         transition={{ duration: 1, delay: 0.2 }}
-        className="relative z-10 grid flex-1 grid-cols-5 justify-end"
+        className="relative z-10 mx-auto grid w-fit grid-cols-5 justify-center lg:w-1/3 lg:justify-end xl:w-fit"
       >
         <Meteors number={10} />
         {/* Row 1 */}
@@ -272,10 +281,7 @@ const Landing = () => {
           origin="right"
           isRotating={rotatingBoxIndex === 3} // Fourth box with icon
         >
-          <Icon
-            icon="vscode-icons:file-type-deno"
-            className="z-50 h-full w-full"
-          />
+          <Icon icon="skill-icons:git" className="z-50 h-full w-full" />
         </BorderBox>
         <BorderBox
           className="border-l-0 border-t-0 bg-primary/10 backdrop-blur-sm"
