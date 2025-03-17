@@ -4,10 +4,13 @@ import { Icon } from '@iconify/react';
 import { SKILLS } from '@/constants/skills';
 import { cn } from '@/lib/utils';
 
-// Animated title component
-const AnimatedTitle = () => {
-  const title = 'Technical Skills';
+interface AnimatedTitleProps {
+  title: string;
+  description: string;
+}
 
+// Animated title component
+export const AnimatedTitle = ({ title, description }: AnimatedTitleProps) => {
   // Animation variants for text reveal
   const container = {
     hidden: { opacity: 0 },
@@ -41,7 +44,7 @@ const AnimatedTitle = () => {
   return (
     <div className="relative mb-20 flex flex-col items-center">
       {/* Animated gradient circle background */}
-      <div className="animate-slow-pulse absolute -z-10 h-64 w-64 rounded-full bg-gradient-to-r from-primary/10 via-accent/5 to-secondary/10 blur-3xl"></div>
+      <div className="absolute -z-10 h-64 w-64 animate-slow-pulse rounded-full bg-gradient-to-r from-primary/10 via-accent/5 to-secondary/10 blur-3xl"></div>
 
       {/* Animated text */}
       <motion.div
@@ -86,7 +89,7 @@ const AnimatedTitle = () => {
         transition={{ delay: 0.6, duration: 0.5 }}
         viewport={{ once: true }}
       >
-        Modern technologies I specialize in
+        {description}
       </motion.p>
     </div>
   );
@@ -133,7 +136,7 @@ const SkillCard = ({
       <Icon
         icon={icon}
         fontSize={300}
-        className="animate-slow-spin absolute -left-20 -top-20 text-gray-300 opacity-[1%]"
+        className="absolute -left-20 -top-20 animate-slow-spin text-gray-300 opacity-[1%]"
       />
 
       {/* Main animated icon */}
@@ -199,7 +202,10 @@ const SkillShelf = () => {
 
   return (
     <div id="shelf" className="container my-36 self-center py-20">
-      <AnimatedTitle />
+      <AnimatedTitle
+        title="Technical Skills"
+        description="Modern technologies I specialize in"
+      />
       <div className="mx-auto grid grid-cols-1 overflow-hidden rounded-lg sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5">
         {SKILLS.map((skill, i) => (
           <SkillCard

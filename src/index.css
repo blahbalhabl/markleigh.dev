@@ -10,11 +10,14 @@
 
 #root {
   min-height: 100dvh;
+  -ms-overflow-style: none;  /* IE and Edge */
+  scrollbar-width: none;  /* Firefox */
 }
 
 ::-webkit-scrollbar {
   display: none;
 }
+
 
 .underline-animation {
   position: relative;
