@@ -5,4 +5,4 @@ Allow: /
 Disallow:
 
 # Sitemap location
-Sitemap: https://ley.dev/sitemap.xml
+Sitemap: https://markleigh-dev.vercel.app/sitemap.xml
